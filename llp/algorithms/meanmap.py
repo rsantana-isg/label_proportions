@@ -23,14 +23,17 @@ class MeanMap(BaseLLPClassifier):
         Regularization parameter for the logistic regression
     max_iter : int, default=1000
         Maximum number of iterations for logistic regression
+    cov_reg : float, default=0.01
+        Covariance regularization parameter for numerical stability
     random_state : int or None, default=None
         Random seed for reproducibility
     """
     
-    def __init__(self, C=1.0, max_iter=1000, random_state=None):
+    def __init__(self, C=1.0, max_iter=1000, cov_reg=0.01, random_state=None):
         super().__init__()
         self.C = C
         self.max_iter = max_iter
+        self.cov_reg = cov_reg  # Covariance regularization for numerical stability
         self.random_state = random_state
         self.classifier = None
         self.mu_pos = None
@@ -96,13 +99,20 @@ class MeanMap(BaseLLPClassifier):
         # Estimate covariance from all bags
         all_samples = np.vstack(X_bags)
         cov = np.cov(all_samples.T)
-        cov_reg = cov + np.eye(n_features) * 0.01  # Add small regularization
+        cov_reg = cov + np.eye(n_features) * self.cov_reg  # Add regularization for numerical stability
         
-        for _ in range(n_synthetic // 2):
+        # Generate equal number of positive and negative samples
+        n_per_class = n_synthetic // 2
+        for _ in range(n_per_class):
             X_synthetic.append(np.random.multivariate_normal(mu_pos, cov_reg))
             y_synthetic.append(1)
             X_synthetic.append(np.random.multivariate_normal(mu_neg, cov_reg))
             y_synthetic.append(0)
+        
+        # Handle odd n_synthetic by adding one more sample
+        if n_synthetic % 2 == 1:
+            X_synthetic.append(np.random.multivariate_normal(mu_pos, cov_reg))
+            y_synthetic.append(1)
         
         X_synthetic = np.array(X_synthetic)
         y_synthetic = np.array(y_synthetic)

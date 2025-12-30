@@ -122,12 +122,13 @@ def generate_llp_dataset(n_samples=1000, n_features=20, n_bags=10,
     y_test = y[test_indices]
     
     # Create bags from training data
-    bag_sizes = np.random.randint(bag_size_range[0], bag_size_range[1], size=n_bags)
+    bag_sizes = np.random.randint(bag_size_range[0], bag_size_range[1] + 1, size=n_bags)
     # Adjust bag sizes to fit training data
     total_needed = np.sum(bag_sizes)
     if total_needed > train_size:
         bag_sizes = (bag_sizes * train_size / total_needed).astype(int)
-        bag_sizes[-1] = train_size - np.sum(bag_sizes[:-1])
+        # Ensure last bag gets remaining samples and no bag has zero size
+        bag_sizes[-1] = max(1, train_size - np.sum(bag_sizes[:-1]))
     
     X_bags, proportions, _ = create_bags(X_train, y_train, bag_sizes, shuffle=True)
     
