@@ -70,6 +70,7 @@ label_proportions/
 │       ├── __init__.py
 │       └── data_utils.py        # Data generation and manipulation
 ├── compare_algorithms.py         # Comparison script
+├── example_usage.py              # Example usage demonstrations
 ├── requirements.txt             # Python dependencies
 ├── README.md                    # This file
 └── docs/                        # Research papers
@@ -90,9 +91,9 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Running the Comparison Script
+### Quick Start Examples
 
-The simplest way to see the algorithms in action is to run the comparison script:
+**1. Run the comparison script** to see algorithm performance:
 
 ```bash
 python compare_algorithms.py
@@ -105,6 +106,18 @@ This will:
 - Evaluate accuracy on a held-out test set
 - Compare computational time
 - Generate visualization plots
+
+**2. Run the example usage script** for more detailed examples:
+
+```bash
+python example_usage.py
+```
+
+This demonstrates:
+- Basic usage with different configurations
+- Custom dataset creation
+- Impact of bag size on performance
+- Label proportion analysis
 
 ### Using the Algorithms Directly
 
